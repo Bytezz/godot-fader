@@ -13,13 +13,11 @@ static func fade_in(node:Node, seconds:float=1.0) -> void:
 	fade(node, seconds, true)
 
 static func fade_out(node:Node, seconds:float=1.0) -> void:
-	print(0)
 	fade(node, seconds, false)
 
 static func fade(node:Node, seconds:float=1.0, fadeIn:bool=true) -> void:
 	var fadeAnimator = _fadeAnimatorScene.instance()
-	if not Engine.get_main_loop().root.has_node("/root"):
-		yield(Engine.get_main_loop().root, "ready")
+	yield(Engine.get_main_loop(),"idle_frame")
 	Engine.get_main_loop().root.add_child(fadeAnimator)
 	fadeAnimator.root_node = Engine.get_main_loop().root.get_path()
 	fadeAnimator.get_animation("Fade").track_set_path(0, str(node.get_path()) + ":modulate:a")
@@ -32,5 +30,6 @@ static func fade(node:Node, seconds:float=1.0, fadeIn:bool=true) -> void:
 	else:
 		fadeAnimator.play_backwards("Fade")
 	
-	#yield(fadeAnimator, "animation_finished")
-	#fadeAnimator.queue_free()
+	yield(fadeAnimator, "animation_finished")
+	fadeAnimator.queue_free()
+
